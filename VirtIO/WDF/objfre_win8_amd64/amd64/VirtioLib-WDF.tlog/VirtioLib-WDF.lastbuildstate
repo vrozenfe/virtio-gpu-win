@@ -1,0 +1,2 @@
+#TargetFrameworkVersion=v4.5.2:PlatformToolSet=WindowsKernelModeDriver10.0:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native64Bit:WindowsTargetPlatformVersion=10.0.10586.0
+Win8 Release|x64|C:\dev\virtio-win-next\VirtIO\|

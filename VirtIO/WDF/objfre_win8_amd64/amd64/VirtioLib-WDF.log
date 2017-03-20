@@ -1,0 +1,2 @@
+﻿  Building 'VirtioLib-WDF' with toolset 'WindowsKernelModeDriver10.0' and the 'Desktop' target platform.
+  VirtioLib-WDF.vcxproj -> C:\dev\virtio-win-next\VirtIO\WDF\objfre_win8_amd64\amd64\virtiolib_wdf.lib
