@@ -1,6 +1,0 @@
-﻿  MemPortIO.c
-  VirtIOWdf.c
-  PCI.c
-  Callbacks.c
-  Generating Code...
-  VirtioLib-WDF.vcxproj -> C:\dev\virtio-win-next\VirtIO\WDF\objfre_wnet_x86\i386\virtiolib_wdf.lib
