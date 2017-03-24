@@ -42,40 +42,35 @@ BYTE PixelMask[BITS_PER_BYTE]  = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01
 
 
 
-VOID GetPitches(_In_ CONST BLT_INFO* pBltInfo, _Out_ LONG* pPixelPitch, _Out_ LONG* pRowPitch)
+VOID 
+GetPitches(
+    _In_ CONST BLT_INFO* pBltInfo,
+    _Out_ LONG* pPixelPitch,
+    _Out_ LONG* pRowPitch
+    )
 {
     switch (pBltInfo->Rotation) {
     case D3DKMDT_VPPR_IDENTITY:
-    {
         *pPixelPitch = (pBltInfo->BitsPerPel / BITS_PER_BYTE);
         *pRowPitch = pBltInfo->Pitch;
         return;
-    }
     case D3DKMDT_VPPR_ROTATE90:
-    {
         *pPixelPitch = -((LONG) pBltInfo->Pitch);
         *pRowPitch = (pBltInfo->BitsPerPel / BITS_PER_BYTE);
         return;
-    }
     case D3DKMDT_VPPR_ROTATE180:
-    {
         *pPixelPitch = -((LONG) pBltInfo->BitsPerPel / BITS_PER_BYTE);
         *pRowPitch = -((LONG) pBltInfo->Pitch);
         return;
-    }
     case D3DKMDT_VPPR_ROTATE270:
-    {
         *pPixelPitch = pBltInfo->Pitch;
         *pRowPitch = -((LONG) pBltInfo->BitsPerPel / BITS_PER_BYTE);
         return;
-    }
     default:
-    {
         VIOGPU_LOG_ASSERTION1("Invalid rotation (0x%I64x) specified", pBltInfo->Rotation);
         *pPixelPitch = 0;
         *pRowPitch = 0;
         return;
-    }
     }
 }
 

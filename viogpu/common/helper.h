@@ -86,7 +86,6 @@ void DebugPrintFunc(const char *format, ...);
 #define DbgPrint(level, line) \
     if (level > nDebugLevel) {} \
     else VirtioDebugPrintProc line
-//    else DebugPrintFuncSerial line
 #else
 #define DbgPrint(level, line) 
 #endif

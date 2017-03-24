@@ -62,10 +62,10 @@ enum virtio_gpu_formats {
 
 #pragma pack(1)
 typedef struct virtio_gpu_rect {
-    __le32 x;
-    __le32 y;
-    __le32 width;
-    __le32 height;
+    ULONG x;
+    ULONG y;
+    ULONG width;
+    ULONG height;
 }GPU_RECT, *PGPU_RECT;
 #pragma pack()
 
@@ -73,19 +73,19 @@ typedef struct virtio_gpu_rect {
 
 #pragma pack(1)
 typedef struct virtio_gpu_ctrl_hdr {
-    __le32 type;
-    __le32 flags;
-    __le64 fence_id;
-    __le32 ctx_id;
-    __le32 padding;
+    ULONG type;
+    ULONG flags;
+    ULONGLONG fence_id;
+    ULONG ctx_id;
+    ULONG padding;
 }GPU_CTRL_HDR, *PGPU_CTRL_HDR;
 #pragma pack()
 
 #pragma pack(1)
 typedef struct virtio_gpu_display_one {
     GPU_RECT r;
-    __le32 enabled;
-    __le32 flags;
+    ULONG enabled;
+    ULONG flags;
 }GPU_DISP_ONE, *PGPU_DISP_ONE;
 #pragma pack()
 
@@ -93,8 +93,8 @@ typedef struct virtio_gpu_display_one {
 #pragma pack(1)
 typedef struct virtio_gpu_resource_unref {
     GPU_CTRL_HDR hdr;
-    __le32 resource_id;
-    __le32 padding;
+    ULONG resource_id;
+    ULONG padding;
 }GPU_RES_UNREF, *PGPU_RES_UNREF;
 #pragma pack()
 
@@ -102,10 +102,10 @@ typedef struct virtio_gpu_resource_unref {
 #pragma pack(1)
 typedef struct virtio_gpu_resource_create_2d {
     GPU_CTRL_HDR hdr;
-    __le32 resource_id;
-    __le32 format;
-    __le32 width;
-    __le32 height;
+    ULONG resource_id;
+    ULONG format;
+    ULONG width;
+    ULONG height;
 }GPU_RES_CREATE_2D, *PGPU_RES_CREATE_2D;
 #pragma pack()
 
@@ -114,8 +114,8 @@ typedef struct virtio_gpu_resource_create_2d {
 typedef struct virtio_gpu_set_scanout {
     GPU_CTRL_HDR hdr;
     GPU_RECT r;
-    __le32 scanout_id;
-    __le32 resource_id;
+    ULONG scanout_id;
+    ULONG resource_id;
 }GPU_SET_SCANOUT, *PGPU_SET_SCANOUT;
 #pragma pack()
 
@@ -124,8 +124,8 @@ typedef struct virtio_gpu_set_scanout {
 typedef struct virtio_gpu_resource_flush {
     GPU_CTRL_HDR hdr;
     GPU_RECT r;
-    __le32 resource_id;
-    __le32 padding;
+    ULONG resource_id;
+    ULONG padding;
 }GPU_RES_FLUSH, *PGPU_RES_FLUSH;
 #pragma pack()
 
@@ -134,17 +134,17 @@ typedef struct virtio_gpu_resource_flush {
 typedef struct virtio_gpu_transfer_to_host_2d {
     GPU_CTRL_HDR hdr;
     GPU_RECT r;
-    __le64 offset;
-    __le32 resource_id;
-    __le32 padding;
+    ULONGLONG offset;
+    ULONG resource_id;
+    ULONG padding;
 }GPU_RES_TRANSF_TO_HOST_2D, *PGPU_RES_TRANSF_TO_HOST_2D;
 #pragma pack()
 
 #pragma pack(1)
 typedef struct virtio_gpu_mem_entry {
-    __le64 addr;
-    __le32 length;
-    __le32 padding;
+    ULONGLONG addr;
+    ULONG length;
+    ULONG padding;
 }GPU_MEM_ENTRY, *PGPU_MEM_ENTRY;
 #pragma pack()
 
@@ -152,8 +152,8 @@ typedef struct virtio_gpu_mem_entry {
 #pragma pack(1)
 typedef struct virtio_gpu_resource_attach_backing {
     GPU_CTRL_HDR hdr;
-    __le32 resource_id;
-    __le32 nr_entries;
+    ULONG resource_id;
+    ULONG nr_entries;
 }GPU_RES_ATTACH_BACKING, *PGPU_RES_ATTACH_BACKING;
 #pragma pack()
 
@@ -161,8 +161,8 @@ typedef struct virtio_gpu_resource_attach_backing {
 #pragma pack(1)
 typedef struct virtio_gpu_resource_detach_backing {
     GPU_CTRL_HDR hdr;
-    __le32 resource_id;
-    __le32 padding;
+    ULONG resource_id;
+    ULONG padding;
 }GPU_RES_DETACH_BACKING, *PGPU_RES_DETACH_BACKING;
 #pragma pack()
 
@@ -194,10 +194,10 @@ typedef struct virtio_gpu_display_mode {
 
 #pragma pack(1)
 typedef struct virtio_gpu_cursor_pos {
-    __le32 scanout_id;
-    __le32 x;
-    __le32 y;
-    __le32 padding;
+    ULONG scanout_id;
+    ULONG x;
+    ULONG y;
+    ULONG padding;
 }GPU_CURSOR_POS, *PGPU_CURSOR_POS;
 #pragma pack()
 
@@ -206,10 +206,10 @@ typedef struct virtio_gpu_cursor_pos {
 typedef struct virtio_gpu_update_cursor {
     GPU_CTRL_HDR hdr;
     GPU_CURSOR_POS pos;  /* update & move */
-    __le32 resource_id;  /* update only */
-    __le32 hot_x;        /* update only */
-    __le32 hot_y;        /* update only */
-    __le32 padding;
+    ULONG resource_id;  /* update only */
+    ULONG hot_x;        /* update only */
+    ULONG hot_y;        /* update only */
+    ULONG padding;
 }GPU_UPDATE_CURSOR, *PGPU_UPDATE_CURSOR;
 #pragma pack()
 

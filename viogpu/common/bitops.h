@@ -15,8 +15,7 @@
 #define SHIFT_LOWER_5_IN_565_BACK  ((BITS_PER_BYTE * 0) + (BITS_PER_BYTE - 5))
 
 
-typedef struct _BLT_INFO
-{
+typedef struct _BLT_INFO {
     PVOID pBits;
     UINT Pitch;
     UINT BitsPerPel;
