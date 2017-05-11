@@ -1,5 +1,5 @@
 @echo off
-: Param1 - Win10 | Win8 | Win7 | Wlh
+: Param1 - Win10 | Win8
 setlocal
 : Param2 - x86|x64
 : Param3 - sys name
