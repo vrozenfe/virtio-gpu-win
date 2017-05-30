@@ -100,6 +100,14 @@ typedef struct _X86BIOS_REGISTERS	// invented names
 
 /*  Undocumented imports from the HAL  */
 
+typedef enum {
+    GPU_DEVICE,
+    VGA_DEVICE,
+    INVALID_DEVICE,
+}WIN_GPU_DEVICE_TYPE;
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
