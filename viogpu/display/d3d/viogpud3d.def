@@ -1,0 +1,6 @@
+; d3d.def : Declares the module parameters for the DLL.
+
+LIBRARY viogpud3d
+
+EXPORTS
+    OpenAdapter
