@@ -92,15 +92,12 @@ NTSTATUS VioGpu3D::StartDevice(_In_  DXGK_START_INFO*   pDxgkStartInfo,
         return Status;
     }
 
-    if (CheckHardware())
-    {
-        m_pHWDevice = new(NonPagedPoolNx) GpuDevice(this);
-    }
-    else
+    if (!CheckHardware())
     {
         return STATUS_DEVICE_HARDWARE_ERROR; //???????
     }
 
+    m_pHWDevice = new(NonPagedPoolNx) GpuDevice(this);
     if (!m_pHWDevice)
     {
         Status = STATUS_NO_MEMORY;
@@ -115,13 +112,13 @@ NTSTATUS VioGpu3D::StartDevice(_In_  DXGK_START_INFO*   pDxgkStartInfo,
         return Status;
     }
 
-    Status = RegisterHWInfo(m_pHWDevice->GetId());
-    if (!NT_SUCCESS(Status))
-    {
-        VIOGPU_LOG_ASSERTION1("RegisterHWInfo failed with status 0x%X\n",
-                           Status);
-        return Status;
-    }
+    //Status = RegisterHWInfo(m_pHWDevice->GetId());
+    //if (!NT_SUCCESS(Status))
+    //{
+    //    VIOGPU_LOG_ASSERTION1("RegisterHWInfo failed with status 0x%X\n",
+    //                       Status);
+    //    return Status;
+    //}
 
     PhysicAddress.QuadPart = m_CurrentModes[0].DispInfo.PhysicAddress.QuadPart;
     if (m_pHWDevice->GetId() == 0)
@@ -131,23 +128,22 @@ NTSTATUS VioGpu3D::StartDevice(_In_  DXGK_START_INFO*   pDxgkStartInfo,
 
     if (!NT_SUCCESS(Status) )
     {
-        DbgPrint(TRACE_LEVEL_ERROR, ("DxgkCbAcquirePostDisplayOwnership failed with status 0x%X Width = %d\n",
-                           Status, m_CurrentModes[0].DispInfo.Width));
+        DbgPrint(TRACE_LEVEL_ERROR, ("DxgkCbAcquirePostDisplayOwnership failed with status 0x%X\n",
+                           Status));
         return STATUS_UNSUCCESSFUL;
     }
-/*
-    if (m_CurrentModes[0].DispInfo.Width == 0)
+
+    if (m_CurrentModes[0].DispInfo.Width == 0 ||
+        m_CurrentModes[0].DispInfo.Height == 0 ||
+        m_CurrentModes[0].DispInfo.PhysicAddress.QuadPart == 0)
     {
-        m_CurrentModes[0].DispInfo.Width = MIN_WIDTH_SIZE; 
-        m_CurrentModes[0].DispInfo.Height = MIN_HEIGHT_SIZE;
-        m_CurrentModes[0].DispInfo.ColorFormat = D3DDDIFMT_A8R8G8B8;
-        m_CurrentModes[0].DispInfo.Pitch = BPPFromPixelFormat(m_CurrentModes[0].DispInfo.ColorFormat) / BITS_PER_BYTE;
-        m_CurrentModes[0].DispInfo.TargetId = 0;
-        if (PhysicAddress.QuadPart != 0L) {
-             m_CurrentModes[0].DispInfo.PhysicAddress.QuadPart = PhysicAddress.QuadPart;
-        }
+        DbgPrint(TRACE_LEVEL_ERROR, ("DxgkCbAcquirePostDisplayOwnership reported invalid frame buffer. (Width=%d, Height=%d, PhysicAddress=0x%I64x)\n",
+            m_CurrentModes[0].DispInfo.Width,
+            m_CurrentModes[0].DispInfo.Height,
+            m_CurrentModes[0].DispInfo.PhysicAddress.QuadPart));
+//        return STATUS_UNSUCCESSFUL;
     }
-*/
+
     m_CurrentModes[0].DispInfo.Width = max(MIN_WIDTH_SIZE, m_CurrentModes[0].DispInfo.Width);
     m_CurrentModes[0].DispInfo.Height = max(MIN_HEIGHT_SIZE, m_CurrentModes[0].DispInfo.Height);
     m_CurrentModes[0].DispInfo.ColorFormat = D3DDDIFMT_A8R8G8B8;
@@ -300,18 +296,22 @@ NTSTATUS VioGpu3D::QueryChildRelations(_Out_writes_bytes_(ChildRelationsSize) DX
     VIOGPU_ASSERT(pChildRelations != NULL);
 
     // The last DXGK_CHILD_DESCRIPTOR in the array of pChildRelations must remain zeroed out, so we subtract this from the count
+    if (ChildRelationsSize <= MAX_CHILDREN * sizeof(PDXGK_CHILD_DESCRIPTOR)) {
+        DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s buffer too small %d (%d)\n", __FUNCTION__, ChildRelationsSize, sizeof(PDXGK_CHILD_DESCRIPTOR)));
+        return STATUS_BUFFER_TOO_SMALL;
+    }
+    RtlZeroMemory(pChildRelations, ChildRelationsSize);
     ULONG ChildRelationsCount = (ChildRelationsSize / sizeof(DXGK_CHILD_DESCRIPTOR)) - 1;
-    ULONG DeviceId = m_pHWDevice->GetId();
     VIOGPU_ASSERT(ChildRelationsCount <= MAX_CHILDREN);
 
     for (UINT ChildIndex = 0; ChildIndex < ChildRelationsCount; ++ChildIndex)
     {
+        DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s ChildIndex = %d\n", __FUNCTION__, ChildIndex));
         pChildRelations[ChildIndex].ChildDeviceType = TypeVideoOutput;
-        pChildRelations[ChildIndex].ChildCapabilities.HpdAwareness = (DeviceId == 0) ? HpdAwarenessAlwaysConnected : HpdAwarenessInterruptible;
-        pChildRelations[ChildIndex].ChildCapabilities.Type.VideoOutput.InterfaceTechnology = (DeviceId == 0) ? D3DKMDT_VOT_INTERNAL : D3DKMDT_VOT_HD15;
+        pChildRelations[ChildIndex].ChildCapabilities.HpdAwareness = HpdAwarenessInterruptible;
+        pChildRelations[ChildIndex].ChildCapabilities.Type.VideoOutput.InterfaceTechnology = D3DKMDT_VOT_HD15;
         pChildRelations[ChildIndex].ChildCapabilities.Type.VideoOutput.MonitorOrientationAwareness = D3DKMDT_MOA_NONE;
         pChildRelations[ChildIndex].ChildCapabilities.Type.VideoOutput.SupportsSdtvModes = FALSE;
-        // TODO: Replace 0 with the actual ACPI ID of the child device, if available
         pChildRelations[ChildIndex].AcpiUid = 0;
         pChildRelations[ChildIndex].ChildUid = ChildIndex;
     }
@@ -375,9 +375,23 @@ NTSTATUS VioGpu3D::QueryAdapterInfo(_In_ CONST DXGKARG_QUERYADAPTERINFO* pQueryA
 
     VIOGPU_ASSERT(pQueryAdapterInfo != NULL);
     DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));
+    NTSTATUS Status = STATUS_SUCCESS;
 
     switch (pQueryAdapterInfo->Type)
     {
+        case DXGKQAITYPE_UMDRIVERPRIVATE:
+        {
+            if (pQueryAdapterInfo->OutputDataSize < sizeof(DWORD/*FIXME*/)) {
+                Status = STATUS_INVALID_PARAMETER;
+                break;
+            }
+
+//            // Copy over the private data for our display driver
+//            RtlMoveMemory(pQueryAdapterInfo->pOutputData,
+//                          &pXenGfxExtension->PrivateData,
+//                          sizeof(XENGFX_UMDRIVERPRIVATE));
+        }
+        break;
         case DXGKQAITYPE_DRIVERCAPS:
         {
             if (!pQueryAdapterInfo->OutputDataSize/* < sizeof(DXGK_DRIVERCAPS)*/)
@@ -394,6 +408,7 @@ NTSTATUS VioGpu3D::QueryAdapterInfo(_In_ CONST DXGKARG_QUERYADAPTERINFO* pQueryA
             pDriverCaps->WDDMVersion = DXGKDDI_WDDMv1_3;
 #endif
             pDriverCaps->HighestAcceptableAddress.QuadPart = (ULONG64)-1;
+            pDriverCaps->MaxAllocationListSlotId = 32;
 
             if (m_pHWDevice->EnablePointer()) {
                 pDriverCaps->MaxPointerWidth  = POINTER_SIZE;
@@ -402,19 +417,56 @@ NTSTATUS VioGpu3D::QueryAdapterInfo(_In_ CONST DXGKARG_QUERYADAPTERINFO* pQueryA
                 pDriverCaps->PointerCaps.Color = 1;
                 pDriverCaps->PointerCaps.MaskedColor = 0;
             }
-            pDriverCaps->SupportNonVGA = FALSE;
-            pDriverCaps->SupportSmoothRotation = TRUE;
-            DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s 1\n", __FUNCTION__));
-            return STATUS_SUCCESS;
-        }
+//            pDriverCaps->SupportNonVGA = FALSE;
+//            pDriverCaps->SupportSmoothRotation = TRUE;
+            pDriverCaps->GammaRampCaps.Gamma_Rgb256x3x16 = 1;
+            pDriverCaps->PresentationCaps.Value = 0;
+            pDriverCaps->MaxQueuedFlipOnVSync = 1;
+            pDriverCaps->FlipCaps.Value = 0;
+            pDriverCaps->FlipCaps.FlipOnVSyncWithNoWait = 1;
+            pDriverCaps->FlipCaps.FlipOnVSyncMmIo = 1;
+            pDriverCaps->SchedulingCaps.Value = 0;
+            pDriverCaps->SchedulingCaps.MultiEngineAware = 1;
+            pDriverCaps->MemoryManagementCaps.Value = 0;
+            pDriverCaps->MemoryManagementCaps.PagingNode = 0;
+            pDriverCaps->GpuEngineTopology.NbAsymetricProcessingNodes = 2;
 
+        }
+        break;
+        case DXGKQAITYPE_QUERYSEGMENT:
+        {
+            DXGK_QUERYSEGMENTOUT* pQuerySegmentOut = (DXGK_QUERYSEGMENTOUT*)pQueryAdapterInfo->pOutputData;
+            if (pQuerySegmentOut->pSegmentDescriptor == NULL) {
+                // First call
+                pQuerySegmentOut->NbSegment = 1;
+                break;
+            }
+
+            RtlZeroMemory(pQuerySegmentOut->pSegmentDescriptor,
+                pQuerySegmentOut->NbSegment * sizeof(DXGK_SEGMENTDESCRIPTOR));
+
+            // Setup one linear aperture-space segment
+            //pQuerySegmentOut->pSegmentDescriptor[0].BaseAddress = ApertureGpuBase;
+            //pQuerySegmentOut->pSegmentDescriptor[0].CpuTranslatedAddress = CpuTranslatedAddress;
+            //pQuerySegmentOut->pSegmentDescriptor[0].Size = PAGE_SIZE*pXenGfxExtension->VideoPfns;
+            //pQuerySegmentOut->pSegmentDescriptor[0].CommitLimit = PAGE_SIZE*pXenGfxExtension->VideoPfns;
+            pQuerySegmentOut->pSegmentDescriptor[0].Flags.Value = 0;
+            pQuerySegmentOut->pSegmentDescriptor[0].Flags.CpuVisible = 1;
+            pQuerySegmentOut->pSegmentDescriptor[0].Flags.Aperture = 1;
+            pQuerySegmentOut->PagingBufferSegmentId = 0;
+            pQuerySegmentOut->PagingBufferSize = 64 * 1024; // TODO 
+            pQuerySegmentOut->PagingBufferPrivateDataSize = 0;
+
+        }
+        break;
         default:
         {
-            // BDD does not need to support any other adapter information types
-            DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
-            return STATUS_NOT_SUPPORTED;
+            Status = STATUS_NOT_SUPPORTED;
         }
     }
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s Type = %d Status = 0x%08X\n", __FUNCTION__, pQueryAdapterInfo->Type, Status));
+    return Status;
+
 }
 
 NTSTATUS VioGpu3D::SetPointerPosition(_In_ CONST DXGKARG_SETPOINTERPOSITION* pSetPointerPosition)
@@ -500,7 +552,7 @@ NTSTATUS VioGpu3D::PresentDisplayOnly(_In_ CONST DXGKARG_PRESENT_DISPLAYONLY* pP
                         RotationNeededByFb,
                         &m_CurrentModes[0]);
 
-    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s returned with Status = 0x%08X\n", __FUNCTION__, Status));
     return Status;
 }
 
@@ -509,10 +561,12 @@ NTSTATUS VioGpu3D::QueryInterface(_In_ CONST PQUERY_INTERFACE pQueryInterface)
     PAGED_CODE();
 
     VIOGPU_ASSERT(pQueryInterface != NULL);
+    NTSTATUS Status = STATUS_SUCCESS;
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s Version = %d\n", __FUNCTION__, pQueryInterface->Version));
 
-    DbgPrint(TRACE_LEVEL_VERBOSE, ("<---> %s Version = %d\n", __FUNCTION__, pQueryInterface->Version));
-
-    return STATUS_NOT_SUPPORTED;
+    Status = STATUS_NOT_SUPPORTED;
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s returned with Status = 0x%08X\n", __FUNCTION__, Status));
+    return Status;
 }
 
 NTSTATUS VioGpu3D::StopDeviceAndReleasePostDisplayOwnership(_In_  D3DDDI_VIDEO_PRESENT_TARGET_ID TargetId,

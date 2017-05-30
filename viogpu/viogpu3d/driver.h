@@ -87,11 +87,91 @@ VioGpu3DDpcRoutine(
 // WDDM Display Only Driver DDIs
 //
 
+// DDI routines
+VOID
+APIENTRY
+VioGpu3DControlEtwLogging(
+    _In_ BOOLEAN Enable,
+    _In_ ULONG Flags,
+    _In_ UCHAR Level);
+
 NTSTATUS
 APIENTRY
 VioGpu3DQueryAdapterInfo(
-    _In_ CONST HANDLE                         hAdapter,
-    _In_ CONST DXGKARG_QUERYADAPTERINFO*      pQueryAdapterInfo);
+    _In_ CONST HANDLE hAdapter,
+    _In_ CONST DXGKARG_QUERYADAPTERINFO *pQueryAdapterInfo);
+
+NTSTATUS
+APIENTRY
+VioGpu3DCreateDevice(
+    _In_ CONST HANDLE hAdapter,
+    _In_ DXGKARG_CREATEDEVICE *pCreateDevice);
+
+NTSTATUS
+APIENTRY
+VioGpu3DCreateAllocation(
+    _In_ CONST HANDLE hAdapter,
+    _In_ DXGKARG_CREATEALLOCATION *pCreateAllocation);
+
+NTSTATUS
+APIENTRY
+VioGpu3DDestroyAllocation(
+    _In_ CONST HANDLE hAdapter,
+    _In_ CONST DXGKARG_DESTROYALLOCATION *pDestroyAllocation);
+
+NTSTATUS
+APIENTRY
+VioGpu3DDescribeAllocation(
+    _In_ CONST HANDLE hAdapter,
+    _In_ DXGKARG_DESCRIBEALLOCATION *pDescribeAlloc);
+
+NTSTATUS
+APIENTRY
+VioGpu3DGetStandardAllocationDriverData(
+    _In_ CONST HANDLE hAdapter,
+    _In_ DXGKARG_GETSTANDARDALLOCATIONDRIVERDATA *pStandardAllocationDriverData);
+
+NTSTATUS
+APIENTRY
+VioGpu3DAcquireSwizzlingRange(
+    _In_ CONST HANDLE hAdapter,
+    _In_ DXGKARG_ACQUIRESWIZZLINGRANGE *pAcquireSwizzlingRange);
+
+NTSTATUS
+APIENTRY
+VioGpu3DReleaseSwizzlingRange(
+    _In_ CONST HANDLE hAdapter,
+    _In_ CONST DXGKARG_RELEASESWIZZLINGRANGE *pReleaseSwizzlingRange);
+
+NTSTATUS
+APIENTRY
+VioGpu3DPatch(
+    _In_ CONST HANDLE hAdapter,
+    _In_ CONST DXGKARG_PATCH *pPatch);
+
+NTSTATUS
+APIENTRY
+VioGpu3DSubmitCommand(
+    _In_ CONST HANDLE hAdapter,
+    _In_ CONST DXGKARG_SUBMITCOMMAND *pSubmitCommand);
+
+NTSTATUS
+APIENTRY
+VioGpu3DPreemptCommand(
+    _In_ CONST HANDLE hAdapter,
+    _In_ CONST DXGKARG_PREEMPTCOMMAND *pPreemptCommand);
+
+NTSTATUS
+APIENTRY
+VioGpu3DBuildPagingBuffer(
+    _In_ CONST HANDLE hAdapter,
+    _In_ DXGKARG_BUILDPAGINGBUFFER *pBuildPagingBuffer);
+
+NTSTATUS
+APIENTRY
+VioGpu3DSetPalette(
+    _In_ CONST HANDLE hAdapter,
+    _In_ CONST DXGKARG_SETPALETTE *pSetPalette);
 
 NTSTATUS
 APIENTRY
@@ -106,15 +186,99 @@ VioGpu3DSetPointerShape(
     _In_ CONST DXGKARG_SETPOINTERSHAPE*       pSetPointerShape);
 
 NTSTATUS
-VioGpu3DQueryInterface(
-    _In_ CONST PVOID                          pDeviceContext,
-    _In_ CONST PQUERY_INTERFACE               pQueryInterface);
+APIENTRY
+CALLBACK
+VioGpu3DResetFromTimeout(
+    _In_ CONST HANDLE hAdapter);
 
 NTSTATUS
 APIENTRY
-VioGpu3DPresentDisplayOnly(
+CALLBACK
+VioGpu3DRestartFromTimeout(
+    _In_ CONST HANDLE hAdapter);
+
+NTSTATUS
+APIENTRY
+VioGpu3DEscape(
+    _In_ CONST HANDLE hAdapter, 
+    _In_ CONST DXGKARG_ESCAPE *pEscape);
+
+NTSTATUS
+APIENTRY
+VioGpu3DCollectDbgInfo(
+    _In_ HANDLE hAdapter,
+    _In_ CONST DXGKARG_COLLECTDBGINFO *pCollectDbgInfo);
+
+NTSTATUS
+APIENTRY
+VioGpu3DQueryCurrentFence(
+    _In_ CONST HANDLE hAdapter,
+    _In_ DXGKARG_QUERYCURRENTFENCE *pCurrentFence);
+
+NTSTATUS
+APIENTRY
+VioGpu3DStopCapture(
+    _In_ CONST HANDLE hAdapter,
+    _In_ CONST DXGKARG_STOPCAPTURE *pStopCapture);
+
+NTSTATUS
+APIENTRY
+VioGpu3DControlInterrupt(
+    _In_ CONST HANDLE hAdapter,
+    _In_ CONST DXGK_INTERRUPT_TYPE InterruptType,
+    _In_ BOOLEAN Enable);
+
+NTSTATUS
+APIENTRY
+VioGpu3DDestroyDevice(
+    _In_ CONST HANDLE hDevice);
+
+NTSTATUS
+APIENTRY
+VioGpu3DOpenAllocation(
+    _In_ CONST HANDLE hDevice,
+    _In_ CONST DXGKARG_OPENALLOCATION *pOpenAllocation);
+
+NTSTATUS
+APIENTRY
+VioGpu3DCloseAllocation(
+    _In_ CONST HANDLE hDevice,
+    _In_ CONST DXGKARG_CLOSEALLOCATION *pCloseAllocation);
+
+NTSTATUS
+APIENTRY
+VioGpu3DRender(
+    _In_ CONST HANDLE hContext,
+    _In_ DXGKARG_RENDER *pRender);
+
+NTSTATUS
+APIENTRY
+VioGpu3DPresent(
+    _In_ CONST HANDLE hContext,
+    _In_ DXGKARG_PRESENT *pPresent);
+
+NTSTATUS
+APIENTRY
+VioGpu3DCreateContext(
+    _In_ CONST HANDLE hDevice,
+    _In_ DXGKARG_CREATECONTEXT *pCreateContext);
+
+NTSTATUS 
+APIENTRY
+VioGpu3DDestroyContext(
+    _In_ CONST HANDLE hContext);
+
+
+NTSTATUS
+APIENTRY
+VioGpu3DQueryAdapterInfo(
     _In_ CONST HANDLE                         hAdapter,
-    _In_ CONST DXGKARG_PRESENT_DISPLAYONLY*   pPresentDisplayOnly);
+    _In_ CONST DXGKARG_QUERYADAPTERINFO*      pQueryAdapterInfo);
+
+NTSTATUS
+VioGpu3DQueryInterface(
+    _In_ CONST PVOID                          pDeviceContext,
+    _In_ CONST PQUERY_INTERFACE               pQueryInterface);
 
 NTSTATUS
 APIENTRY
@@ -164,18 +328,6 @@ VioGpu3DUpdateActiveVidPnPresentPath(
     _In_ CONST HANDLE                                       hAdapter,
     _In_ CONST DXGKARG_UPDATEACTIVEVIDPNPRESENTPATH* CONST  pUpdateActiveVidPnPresentPath);
 
-NTSTATUS
-APIENTRY
-VioGpu3DQueryVidPnHWCapability(
-    _In_ CONST HANDLE                         hAdapter,
-    _Inout_ DXGKARG_QUERYVIDPNHWCAPABILITY*   pVidPnHWCaps);
-
-NTSTATUS
-APIENTRY
-VioGpu3DStopDeviceAndReleasePostDisplayOwnership(
-    _In_  VOID*                          pDeviceContext,
-    _In_  D3DDDI_VIDEO_PRESENT_TARGET_ID TargetId,
-    _Out_ DXGK_DISPLAY_INFORMATION*      DisplayInfo);
 
 // Must be Non-Paged
 NTSTATUS
@@ -199,4 +351,16 @@ VioGpu3DSystemDisplayWrite(
     _In_  UINT  SourceStride,
     _In_  UINT  PositionX,
     _In_  UINT  PositionY);
+
+NTSTATUS
+APIENTRY
+VioGpu3DSetVidPnSourceAddress(
+    _In_  CONST HANDLE hAdapter,
+    _In_  CONST DXGKARG_SETVIDPNSOURCEADDRESS *pSetVidPnSourceAddress);
+
+NTSTATUS
+APIENTRY
+VioGpu3DGetScanLine(
+    _In_  CONST HANDLE hAdapter,
+    _In_  DXGKARG_GETSCANLINE *pGetScanLine);
 
