@@ -22,8 +22,11 @@
  *
 **********************************************************************/
 #include "helper.h"
+#ifdef VIOGPU_D3D
+#include "viogpu3d.h"
+#elif VIOGPU_DOD
 #include "viogpudo.h"
-
+#endif
 
 //FIXME use DxgkCbWriteDeviceSpace
 u32 ReadVirtIODeviceRegister(ULONG_PTR ulRegister)
@@ -148,9 +151,13 @@ static int PCIReadConfig(
     PAGED_CODE();
 
     NTSTATUS Status;
+#ifdef VIOGPU_D3D
+    VioGpu3D* pVioGpu = pdev->GetVioGpu();
+#elif VIOGPU_DOD
     VioGpuDod* pVioGpu = pdev->GetVioGpu();
+#endif
     PDXGKRNL_INTERFACE pDxgkInterface = pVioGpu->GetDxgkInterface();
-    ULONG BytesRead;
+    ULONG BytesRead = 0;
 
     DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));
     Status = pDxgkInterface->DxgkCbReadDeviceSpace(pDxgkInterface->DeviceHandle,
@@ -420,6 +427,7 @@ bool CPciResources::Init(PDXGKRNL_INTERFACE pDxgkInterface, PCM_RESOURCE_LIST pR
                    DbgPrint( TRACE_LEVEL_INFORMATION, ("Bus number\n"));
                    break;
               default:
+                   DbgPrint( TRACE_LEVEL_ERROR, ("Unsupported descriptor type = %d\n", pResDescriptor->Type));
                    break;
            }
         }

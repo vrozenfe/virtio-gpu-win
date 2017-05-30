@@ -266,7 +266,7 @@ PGPU_VBUFFER CtrlQueue::DequeueBufferLocked(_Out_ PUINT len)
     DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));
     PGPU_VBUFFER buf = NULL;
     buf = (PGPU_VBUFFER)GetBuf(len);
-    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s buf %p len = %d\n", __FUNCTION__, buf, len));
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s buf %p len = %d\n", __FUNCTION__, buf, *len));
     return buf;
 }
 

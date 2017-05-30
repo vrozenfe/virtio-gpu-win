@@ -68,20 +68,15 @@ extern "C" {
 
 extern VirtIOSystemOps VioGpuSystemOps;
 
-typedef enum {
-    GPU_DEVICE,
-    VGA_DEVICE,
-    INVALID_DEVICE,
-}WIN_GPU_DEVICE_TYPE;
-
 #define DBG 1
 
 #ifdef DBG
+#define PRINT_DEBUG 1
+//#define COM_DEBUG 1
 
 extern int nDebugLevel;
 void DebugPrintFuncSerial(const char *format, ...);
-
-void DebugPrintFunc(const char *format, ...);
+void DebugPrintFuncKdPrint(const char *format, ...);
 
 #define DbgPrint(level, line) \
     if (level > nDebugLevel) {} \
