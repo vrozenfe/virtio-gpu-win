@@ -24,7 +24,7 @@ void InitializeDebugPrints(IN PDRIVER_OBJECT  DriverObject, IN PUNICODE_STRING R
 #ifdef DBG
     bDebugPrint = 1;
     virtioDebugLevel = 0;//0xff;
-    nDebugLevel = TRACE_LEVEL_ERROR;
+    nDebugLevel = TRACE_LEVEL_VERBOSE;
     VirtioDebugPrintProc = DebugPrintFuncSerial;
 #endif
 }
