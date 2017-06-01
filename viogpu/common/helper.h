@@ -48,6 +48,7 @@ extern "C" {
     #include "viogpu.h"
     #include "viogpu_queue.h"
     #include "viogpu_idr.h"
+    #include "common.h"
 }
 
 #define MIN(x, y) (((x) <= (y)) ? (x) : (y))
