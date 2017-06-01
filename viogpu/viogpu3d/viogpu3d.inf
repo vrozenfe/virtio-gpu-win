@@ -66,6 +66,8 @@ HKR,,TypesSupported,%REG_DWORD%,7
 
 [VioGpu3D_DeviceSettings]
 HKR,, VgaCompatible,               %REG_DWORD%, 0
+HKR,, InstalledDisplayDrivers,     %REG_MULTI_SZ%, viogpud3d
+HKR,, UserModeDriverName,          %REG_MULTI_SZ%, viogpud3d.dll
 
 [VioGpu3D_PCI_MSIX]
 HKR, "Interrupt Management",, 0x00000010
