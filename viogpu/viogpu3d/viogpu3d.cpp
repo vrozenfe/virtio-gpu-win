@@ -381,15 +381,11 @@ NTSTATUS VioGpu3D::QueryAdapterInfo(_In_ CONST DXGKARG_QUERYADAPTERINFO* pQueryA
     {
         case DXGKQAITYPE_UMDRIVERPRIVATE:
         {
-            if (pQueryAdapterInfo->OutputDataSize < sizeof(DWORD/*FIXME*/)) {
+            if (pQueryAdapterInfo->OutputDataSize < sizeof(VIOGPU_PRIVATEDATA)) {
                 Status = STATUS_INVALID_PARAMETER;
                 break;
             }
-
-//            // Copy over the private data for our display driver
-//            RtlMoveMemory(pQueryAdapterInfo->pOutputData,
-//                          &pXenGfxExtension->PrivateData,
-//                          sizeof(XENGFX_UMDRIVERPRIVATE));
+            m_pHWDevice->FillPrivateData(pQueryAdapterInfo->pOutputData);
         }
         break;
         case DXGKQAITYPE_DRIVERCAPS:
@@ -2260,6 +2256,8 @@ NTSTATUS GpuDevice::HWInit(PCM_RESOURCE_LIST pResList, DXGK_DISPLAY_INFORMATION*
     {
         DbgPrint(TRACE_LEVEL_FATAL, ("%s GetModeList failed with %x\n", __FUNCTION__, status));
     }
+    m_PrivateData.Version = VIOGPU_D3D_VERSION;
+    m_PrivateData.Magic = VIOGPU_D3D_MAGIC;
     return status;
 }
 
@@ -2526,6 +2524,17 @@ NTSTATUS GpuDevice::SetPointerPosition(_In_ CONST DXGKARG_SETPOINTERPOSITION* pS
     ret = m_CursorQueue.QueueCursor(vbuf);
     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s vbuf = %p, ret = %d\n", __FUNCTION__, vbuf, ret));
     return STATUS_SUCCESS;
+}
+
+VOID GpuDevice::FillPrivateData(_Out_ PVOID pData)
+{
+	PAGED_CODE();
+
+	DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));
+
+	RtlMoveMemory(pData,
+		&m_PrivateData,
+		sizeof(VIOGPU_PRIVATEDATA));
 }
 
 BOOLEAN GpuDevice::GetDisplayInfo(void)

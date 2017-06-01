@@ -86,6 +86,7 @@ public:
     VOID ResetDevice(VOID);
     NTSTATUS SetPointerShape(_In_ CONST DXGKARG_SETPOINTERSHAPE* pSetPointerShape, _In_ CONST CURRENT_BDD_MODE* pModeCur);
     NTSTATUS SetPointerPosition(_In_ CONST DXGKARG_SETPOINTERPOSITION* pSetPointerPosition, _In_ CONST CURRENT_BDD_MODE* pModeCur);
+    VOID FillPrivateData(_Out_ PVOID pData);
     CPciResources* GetPciResources(void) { return &m_PciResources; }
     NTSTATUS AcquireFrameBuffer(CURRENT_BDD_MODE* pCurrentBddMode) { UNREFERENCED_PARAMETER(pCurrentBddMode);  return STATUS_SUCCESS; }
     NTSTATUS ReleaseFrameBuffer(CURRENT_BDD_MODE* pCurrentBddMode) { UNREFERENCED_PARAMETER(pCurrentBddMode);  return STATUS_SUCCESS; }
@@ -142,6 +143,7 @@ private:
     USHORT m_CurrentMode;
     USHORT m_CustomMode;
     ULONG  m_Id;
+    VIOGPU_PRIVATEDATA m_PrivateData;
 };
 
 class VioGpu3D {
