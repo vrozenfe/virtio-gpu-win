@@ -797,11 +797,11 @@ OpenAdapter(D3DDDIARG_OPENADAPTER *pOpenData)
         return hr;
     }
 
-//    if ((PrivateData.Magic != XENGFX_D3D_MAGIC)||(PrivateData.Version != XENGFX_D3D_MAGIC)) {
-//        TraceLog((L"<--->Invalid driver magic %x or version %d failed\n",
-//                          PrivateData.Magic, PrivateData.Version));
-//        return E_FAIL;
-//    }
+    if ((PrivateData.Magic != VIOGPU_D3D_MAGIC)||(PrivateData.Version != VIOGPU_D3D_VERSION)) {
+        TraceLog((L"<--->Invalid driver magic %x or version %d failed\n",
+                          PrivateData.Magic, PrivateData.Version));
+        return E_FAIL;
+    }
 
     // Create an adapter object
     pVioGpuAdapter = (PVIOGPU_D3D_ADAPTER)malloc(sizeof(VIOGPU_D3D_ADAPTER));
