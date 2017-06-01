@@ -33,22 +33,6 @@
       <Configuration>Win8 Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Win8.1 Debug|Win32">
-      <Configuration>Win8.1 Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Win8.1 Debug|x64">
-      <Configuration>Win8.1 Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Win8.1 Release|Win32">
-      <Configuration>Win8.1 Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Win8.1 Release|x64">
-      <Configuration>Win8.1 Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F3A71E35-1E34-4BEC-B2F3-3A1C4EDB4666}</ProjectGuid>
@@ -77,14 +61,6 @@
     <DriverType>WDM</DriverType>
     <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|Win32'" Label="Configuration">
-    <TargetVersion>Windows10</TargetVersion>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
-    <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>WDM</DriverType>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -94,14 +70,6 @@
     <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|Win32'" Label="Configuration">
-    <TargetVersion>Windows10</TargetVersion>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
-    <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>WDM</DriverType>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|Win32'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
@@ -125,14 +93,6 @@
     <DriverType>WDM</DriverType>
     <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|x64'" Label="Configuration">
-    <TargetVersion>Windows10</TargetVersion>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
-    <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>WDM</DriverType>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -142,14 +102,6 @@
     <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|x64'" Label="Configuration">
-    <TargetVersion>Windows10</TargetVersion>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
-    <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>WDM</DriverType>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
@@ -181,13 +133,6 @@
     <TargetName>viogpu3d</TargetName>
     <EnableInf2cat>false</EnableInf2cat>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|Win32'">
-    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>objfre_win81_x86\i386\</OutDir>
-    <IntDir>objfre_win81_x86\i386\</IntDir>
-    <TargetName>viogpu3d</TargetName>
-    <EnableInf2cat>false</EnableInf2cat>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <OutDir>objchk_win10_x86\i386\</OutDir>
@@ -199,13 +144,6 @@
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <OutDir>objchk_win8_x86\i386\</OutDir>
     <IntDir>objchk_win8_x86\i386\</IntDir>
-    <TargetName>viogpu3d</TargetName>
-    <EnableInf2cat>false</EnableInf2cat>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|Win32'">
-    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>objchk_win81_x86\i386\</OutDir>
-    <IntDir>objchk_win81_x86\i386\</IntDir>
     <TargetName>viogpu3d</TargetName>
     <EnableInf2cat>false</EnableInf2cat>
   </PropertyGroup>
@@ -224,13 +162,6 @@
     <TargetName>viogpu3d</TargetName>
     <EnableInf2cat>false</EnableInf2cat>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|x64'">
-    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>objfre_win81_x86\amd64\</OutDir>
-    <IntDir>objfre_win81_x86\amd64\</IntDir>
-    <TargetName>viogpu3d</TargetName>
-    <EnableInf2cat>false</EnableInf2cat>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <OutDir>objchk_win10_x86\amd64\</OutDir>
@@ -242,13 +173,6 @@
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <OutDir>objchk_win8_x86\amd64\</OutDir>
     <IntDir>objchk_win8_x86\amd64\</IntDir>
-    <TargetName>viogpu3d</TargetName>
-    <EnableInf2cat>false</EnableInf2cat>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|x64'">
-    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>objchk_win81_x86\amd64\</OutDir>
-    <IntDir>objchk_win81_x86\amd64\</IntDir>
     <TargetName>viogpu3d</TargetName>
     <EnableInf2cat>false</EnableInf2cat>
   </PropertyGroup>
@@ -283,19 +207,6 @@
       <AdditionalLibraryDirectories>..\..\VirtIO\objfre_win8_x86\amd64\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|Win32'">
-    <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(KernelBufferOverflowLib);$(DDK_LIB_PATH)ntoskrnl.lib;$(DDK_LIB_PATH)hal.lib;$(DDK_LIB_PATH)wmilib.lib;$(DDK_LIB_PATH)\displib.lib;virtiolib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\VirtIO\objfre_win8_x86\i386\</AdditionalLibraryDirectories>
-    </Link>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories);$(DDK_INC_PATH);$(SDK_INC_PATH);..\common;..\..\VirtIO;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VIOGPU_D3D=1_X86_=1;i386=1;STD_CALL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <PostBuildEvent>
-      <Command>        packOne.bat $(TargetOS) $(TargetArch) viogpudo</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|x64 '">
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(KernelBufferOverflowLib);$(DDK_LIB_PATH)ntoskrnl.lib;$(DDK_LIB_PATH)hal.lib;$(DDK_LIB_PATH)wmilib.lib;$(DDK_LIB_PATH)\displib.lib</AdditionalDependencies>
@@ -326,19 +237,6 @@
       <AdditionalDependencies>%(AdditionalDependencies);$(KernelBufferOverflowLib);$(DDK_LIB_PATH)ntoskrnl.lib;$(DDK_LIB_PATH)hal.lib;$(DDK_LIB_PATH)wmilib.lib;$(DDK_LIB_PATH)\displib.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\VirtIO\objchk_win8_x86\amd64\</AdditionalLibraryDirectories>
     </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|Win32'">
-    <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(KernelBufferOverflowLib);$(DDK_LIB_PATH)ntoskrnl.lib;$(DDK_LIB_PATH)hal.lib;$(DDK_LIB_PATH)wmilib.lib;$(DDK_LIB_PATH)\displib.lib;virtiolib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\VirtIO\objchk_win8_x86\i386\</AdditionalLibraryDirectories>
-    </Link>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories);$(DDK_INC_PATH);$(SDK_INC_PATH);..\common;..\..\VirtIO;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VIOGPU_D3D=1_X86_=1;i386=1;STD_CALL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <PostBuildEvent>
-      <Command>        packOne.bat $(TargetOS) $(TargetArch) viogpudo</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|x64 '">
     <Link>
@@ -402,18 +300,6 @@
       <Command>        packOne.bat Win10 x64 viogpu3d</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|x64'">
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories);$(DDK_INC_PATH);$(SDK_INC_PATH);..\common;..\..\VirtIO;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VIOGPU_D3D=1_WIN64;_AMD64_;AMD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(KernelBufferOverflowLib);$(DDK_LIB_PATH)ntoskrnl.lib;$(DDK_LIB_PATH)hal.lib;$(DDK_LIB_PATH)wmilib.lib;$(DDK_LIB_PATH)\displib.lib;virtiolib.lib</AdditionalDependencies>
-    </Link>
-    <PostBuildEvent>
-      <Command>        packOne.bat $(TargetOS) $(TargetArch) viogpudo</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories);$(DDK_INC_PATH);$(SDK_INC_PATH);..\common;..\..\VirtIO;</AdditionalIncludeDirectories>
@@ -445,18 +331,6 @@
       <Command>        packOne.bat Win8 x64 viogpu3d</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|x64'">
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories);$(DDK_INC_PATH);$(SDK_INC_PATH);..\common;..\..\VirtIO;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VIOGPU_D3D=1_WIN64;_AMD64_;AMD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(KernelBufferOverflowLib);$(DDK_LIB_PATH)ntoskrnl.lib;$(DDK_LIB_PATH)hal.lib;$(DDK_LIB_PATH)wmilib.lib;$(DDK_LIB_PATH)\displib.lib;virtiolib.lib</AdditionalDependencies>
-    </Link>
-    <PostBuildEvent>
-      <Command>        packOne.bat $(TargetOS) $(TargetArch) viogpudo</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\common\baseobj.h" />
     <ClInclude Include="..\common\bitops.h" />
@@ -482,36 +356,24 @@
       <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win8 Release|Win32'">
       </KmdfVersionNumber>
       <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win8 Release|Win32'">false</EnableVerbose>
-      <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|Win32'">
-      </KmdfVersionNumber>
-      <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|Win32'">false</EnableVerbose>
       <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
       </KmdfVersionNumber>
       <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">false</EnableVerbose>
       <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">
       </KmdfVersionNumber>
       <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">false</EnableVerbose>
-      <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|Win32'">
-      </KmdfVersionNumber>
-      <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|Win32'">false</EnableVerbose>
       <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|Win32'">
       </KmdfVersionNumber>
       <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|Win32'">false</EnableVerbose>
       <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win8 Release|x64'">
       </KmdfVersionNumber>
       <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win8 Release|x64'">false</EnableVerbose>
-      <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|x64'">
-      </KmdfVersionNumber>
-      <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|x64'">false</EnableVerbose>
       <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
       </KmdfVersionNumber>
       <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">false</EnableVerbose>
       <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
       </KmdfVersionNumber>
       <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">false</EnableVerbose>
-      <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|x64'">
-      </KmdfVersionNumber>
-      <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|x64'">false</EnableVerbose>
       <KmdfVersionNumber Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|x64'">
       </KmdfVersionNumber>
       <EnableVerbose Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|x64'">false</EnableVerbose>
