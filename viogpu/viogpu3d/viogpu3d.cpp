@@ -397,12 +397,7 @@ NTSTATUS VioGpu3D::QueryAdapterInfo(_In_ CONST DXGKARG_QUERYADAPTERINFO* pQueryA
             }
 
             DXGK_DRIVERCAPS* pDriverCaps = (DXGK_DRIVERCAPS*)pQueryAdapterInfo->pOutputData;
-            DbgPrint(TRACE_LEVEL_ERROR, ("InterruptMessageNumber = %d, WDDMVersion = %d\n", pDriverCaps->InterruptMessageNumber, pDriverCaps->WDDMVersion));
             RtlZeroMemory(pDriverCaps, pQueryAdapterInfo->OutputDataSize/*sizeof(DXGK_DRIVERCAPS)*/);
-            pDriverCaps->WDDMVersion = DXGKDDI_WDDMv1_2;
-#if (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM1_3)
-            pDriverCaps->WDDMVersion = DXGKDDI_WDDMv1_3;
-#endif
             pDriverCaps->HighestAcceptableAddress.QuadPart = (ULONG64)-1;
             pDriverCaps->MaxAllocationListSlotId = 32;
 
@@ -415,17 +410,22 @@ NTSTATUS VioGpu3D::QueryAdapterInfo(_In_ CONST DXGKARG_QUERYADAPTERINFO* pQueryA
             }
 //            pDriverCaps->SupportNonVGA = FALSE;
 //            pDriverCaps->SupportSmoothRotation = TRUE;
-            pDriverCaps->GammaRampCaps.Gamma_Rgb256x3x16 = 1;
-            pDriverCaps->PresentationCaps.Value = 0;
-            pDriverCaps->MaxQueuedFlipOnVSync = 1;
-            pDriverCaps->FlipCaps.Value = 0;
-            pDriverCaps->FlipCaps.FlipOnVSyncWithNoWait = 1;
-            pDriverCaps->FlipCaps.FlipOnVSyncMmIo = 1;
-            pDriverCaps->SchedulingCaps.Value = 0;
+//            pDriverCaps->GammaRampCaps.Gamma_Rgb256x3x16 = 1;
+//            pDriverCaps->PresentationCaps.Value = 0;
+//            pDriverCaps->MaxQueuedFlipOnVSync = 1;
+//            pDriverCaps->FlipCaps.Value = 0;
+//            pDriverCaps->FlipCaps.FlipOnVSyncWithNoWait = 1;
+            //pDriverCaps->FlipCaps.FlipOnVSyncMmIo = 1;
+            //pDriverCaps->SchedulingCaps.Value = 0;
+            //pDriverCaps->SchedulingCaps.MultiEngineAware = 1;
+            //pDriverCaps->MemoryManagementCaps.Value = 0;
+            //pDriverCaps->MemoryManagementCaps.PagingNode = 0;
+            //pDriverCaps->GpuEngineTopology.NbAsymetricProcessingNodes = 2;
+
+            pDriverCaps->WDDMVersion = DXGKDDI_WDDMv1_3;
+            pDriverCaps->PresentationCaps.NoScreenToScreenBlt = 1;
+            pDriverCaps->PresentationCaps.NoOverlapScreenBlt = 1;
             pDriverCaps->SchedulingCaps.MultiEngineAware = 1;
-            pDriverCaps->MemoryManagementCaps.Value = 0;
-            pDriverCaps->MemoryManagementCaps.PagingNode = 0;
-            pDriverCaps->GpuEngineTopology.NbAsymetricProcessingNodes = 2;
 
         }
         break;
