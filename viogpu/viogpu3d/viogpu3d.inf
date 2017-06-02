@@ -1,6 +1,6 @@
 ;
-; Copyright (c) 2016-2017, Red Hat Inc.
-; viogpudo.inf
+; Copyright (c) 2017, Red Hat Inc.
+; viogpu3d.inf
 ;
 
 [Version]
@@ -55,7 +55,8 @@ AddReg = VioGpu3D_PCI_MSIX
 ServiceType = %SERVICE_KERNEL_DRIVER%
 StartType = %SERVICE_DEMAND_START%
 ErrorControl = %SERVICE_ERROR_IGNORE%
-ServiceBinary = %12%\viogpudo.sys
+LoadOrderGroup = Video
+ServiceBinary = %12%\viogpu3d.sys
 
 [VioGpu3D_EventLog_Inst]
 AddReg = VioGpu3D_EventLog_Inst.AddReg
@@ -82,7 +83,7 @@ HKR, "Interrupt Management\Affinity Policy", DevicePriority, 0x00010001, 3
 
 ;  *******Localizable Strings*******
 diskId1 = "Red Hat VirtIO GPU controller Installation Disk"
-VioGpu3D.DeviceDesc = "Red Hat VirtIO GPU DOD controller"
+VioGpu3D.DeviceDesc = "Red Hat VirtIO GPU WDDM Graphics Display Driver"
 RHEL = "Red Hat, Inc."
 
 ;  *******Non Localizable Strings*******
