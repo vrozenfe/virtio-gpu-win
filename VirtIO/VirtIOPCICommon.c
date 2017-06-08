@@ -31,7 +31,6 @@ NTSTATUS virtio_device_initialize(VirtIODevice *vdev,
                                   bool msix_used)
 {
     NTSTATUS status;
-    DPrintf(0, ("%s TP %d\n", __FUNCTION__, 1));
     
     RtlZeroMemory(vdev, sizeof(VirtIODevice));
     vdev->DeviceContext = DeviceContext;
@@ -40,22 +39,15 @@ NTSTATUS virtio_device_initialize(VirtIODevice *vdev,
     vdev->info = vdev->inline_info;
     vdev->maxQueues = ARRAYSIZE(vdev->inline_info);
 
-    DPrintf(0, ("%s TP %d\n", __FUNCTION__, 2));
     status = vio_modern_initialize(vdev);
     if (status == STATUS_DEVICE_NOT_CONNECTED) {
         /* fall back to legacy virtio device */
-    DPrintf(0, ("%s TP %d\n", __FUNCTION__, 3));
-
         status = vio_legacy_initialize(vdev);
-    DPrintf(0, ("%s TP %d\n", __FUNCTION__, 4));
-
     }
     if (NT_SUCCESS(status)) {
-    DPrintf(0, ("%s TP %d\n", __FUNCTION__, 5));
 
         /* Always start by resetting the device */
         virtio_device_reset(vdev);
-    DPrintf(0, ("%s TP %d\n", __FUNCTION__, 6));
         
         /* Acknowledge that we've seen the device. */
         virtio_add_status(vdev, VIRTIO_CONFIG_S_ACKNOWLEDGE);
