@@ -5,10 +5,12 @@
 #include "common.h"
 
 
-VOID TraceLog(CONST WCHAR *pFormat, ...);
+//VOID TraceLog(CONST WCHAR *pFormat, ...);
 VOID DbgLog(CONST WCHAR *pFormat, ...);
 
-#ifndef DBG
+#define DBG 1
+
+#ifdef DBG
 #define TraceLog(a) DbgLog a
 #else
 #define TraceLog(a) do {} while (FALSE)
