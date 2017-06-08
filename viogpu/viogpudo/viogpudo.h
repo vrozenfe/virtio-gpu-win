@@ -297,8 +297,8 @@ private:
     NTSTATUS UpdateChildStatus(BOOLEAN connect);
     void SetCustomDisplay(_In_ USHORT xres,
                               _In_ USHORT yres);
-    void CreateFrameBuffer(PVIDEO_MODE_INFORMATION pModeInfo, CURRENT_BDD_MODE* pCurrentBddMode);
-    void DestroyFrameBuffer(void);
+    void CreateFrameBufferObj(PVIDEO_MODE_INFORMATION pModeInfo, CURRENT_BDD_MODE* pCurrentBddMode);
+    void DestroyFrameBufferObj(void);
     BOOLEAN CreateCursor(_In_ CONST DXGKARG_SETPOINTERSHAPE* pSetPointerShape, _In_ CONST CURRENT_BDD_MODE* pCurrentBddMode);
     void DestroyCursor(void);
     BOOLEAN GpuObjectAttach(UINT res_id, VioGpuObj* obj);

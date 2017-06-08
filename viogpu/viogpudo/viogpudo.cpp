@@ -2482,7 +2482,7 @@ GpuDevice::~GpuDevice(void)
     PAGED_CODE();
     DbgPrint(TRACE_LEVEL_INFORMATION, ("---> %s\n", __FUNCTION__));
     DestroyCursor();
-    DestroyFrameBuffer();
+    DestroyFrameBufferObj();
     GpuDeviceClose();
     HWClose();
     delete [] reinterpret_cast<BYTE*>(m_ModeInfo);
@@ -2505,10 +2505,10 @@ NTSTATUS GpuDevice::SetCurrentMode(ULONG Mode, CURRENT_BDD_MODE* pCurrentBddMode
     {
         if (Mode == m_ModeNumbers[idx])
         {
-            DestroyFrameBuffer();
+            DestroyFrameBufferObj();
             pCurrentBddMode->Flags.FrameBufferIsActive = FALSE;
             pCurrentBddMode->DispInfo.PhysicAddress.QuadPart = 0LL;
-            CreateFrameBuffer(&m_ModeInfo[idx], pCurrentBddMode);
+            CreateFrameBufferObj(&m_ModeInfo[idx], pCurrentBddMode);
             DbgPrint(TRACE_LEVEL_ERROR, ("%s device %d: setting current mode %d (%d x %d)\n",
                 __FUNCTION__, m_Id, Mode, m_ModeInfo[idx].VisScreenWidth,
                 m_ModeInfo[idx].VisScreenHeight));
@@ -3393,7 +3393,7 @@ UINT ColorFormat(UINT format)
     return VIRTIO_GPU_FORMAT_B8G8R8A8_UNORM;
 }
 
-void GpuDevice::CreateFrameBuffer(PVIDEO_MODE_INFORMATION pModeInfo, CURRENT_BDD_MODE* pCurrentBddMode)
+void GpuDevice::CreateFrameBufferObj(PVIDEO_MODE_INFORMATION pModeInfo, CURRENT_BDD_MODE* pCurrentBddMode)
 {
     UINT resid, format, size;
     VioGpuObj* obj;
@@ -3426,7 +3426,7 @@ void GpuDevice::CreateFrameBuffer(PVIDEO_MODE_INFORMATION pModeInfo, CURRENT_BDD
     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
 }
 
-void GpuDevice::DestroyFrameBuffer(void)
+void GpuDevice::DestroyFrameBufferObj(void)
 {
     PAGED_CODE();
     DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));

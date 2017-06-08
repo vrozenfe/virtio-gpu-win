@@ -96,6 +96,8 @@ public:
     VOID SetCurrentModeIndex(USHORT idx) {m_CurrentMode = idx;}
     ULONG GetId(void) { return m_Id; }
     VioGpu3D* GetVioGpu(void) {return m_pVioGpu3D;}
+    VOID QuerySegment(_Out_ DXGK_QUERYSEGMENTOUT* pQuerySegmentOut);
+    UINT GetVSyncFreq() { return 60; }
 protected:
 private:
     NTSTATUS GpuDeviceInit(DXGK_DISPLAY_INFORMATION* pDispInfo);
@@ -107,10 +109,10 @@ private:
     NTSTATUS UpdateChildStatus(BOOLEAN connect);
     void SetCustomDisplay(_In_ USHORT xres,
                               _In_ USHORT yres);
-    void CreateFrameBuffer(PVIDEO_MODE_INFORMATION pModeInfo, CURRENT_BDD_MODE* pCurrentBddMode);
-    void DestroyFrameBuffer(void);
-    BOOLEAN CreateCursor(_In_ CONST DXGKARG_SETPOINTERSHAPE* pSetPointerShape, _In_ CONST CURRENT_BDD_MODE* pCurrentBddMode);
-    void DestroyCursor(void);
+    void CreateFrameBufferObj(PVIDEO_MODE_INFORMATION pModeInfo, CURRENT_BDD_MODE* pCurrentBddMode);
+    void DestroyFrameBufferObj(void);
+    BOOLEAN CreateCursorObj(_In_ CONST DXGKARG_SETPOINTERSHAPE* pSetPointerShape, _In_ CONST CURRENT_BDD_MODE* pCurrentBddMode);
+    void DestroyCursorObj(void);
     BOOLEAN GpuObjectAttach(UINT res_id, VioGpuObj* obj);
     void static ThreadWork(_In_ PVOID Context);
     void ThreadWorkRoutine(void);
@@ -118,9 +120,6 @@ private:
     NTSTATUS VirtIoDeviceInit(void);
 private:
     VirtIODevice m_VioDev;
-    PUCHAR  m_IoBase;
-    BOOLEAN m_IoMapped;
-    ULONG   m_IoSize;
     CPciResources m_PciResources;
     UINT64 m_u64HostFeatures;
     UINT64 m_u64GuestFeatures;
@@ -130,8 +129,10 @@ private:
     CrsrQueue m_CursorQueue;
     VioGpuBuf m_GpuBuf;
     VioGpuIdr m_Idr;
-    VioGpuObj* m_pFrameBuf;
-    VioGpuObj* m_pCursorBuf;
+    VioGpuObj* m_pFrameObj;
+    VioGpuObj* m_pCursorObj;
+    VioGpuMemSegment m_CursorSegment;
+    VioGpuMemSegment m_FrameSegment;
     volatile ULONG m_PendingWorks;
     KEVENT m_ConfigUpdateEvent;
     PETHREAD m_pWorkThread;
