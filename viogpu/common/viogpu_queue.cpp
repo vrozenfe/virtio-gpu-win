@@ -597,22 +597,21 @@ void VioGpuBuf::FreeBuf(
     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
 }
 
-VioGpuObj::VioGpuObj(void)
+VioGpuMemSegment::VioGpuMemSegment(void)
 {
     PAGED_CODE();
 
     DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));
 
-    m_uiHwRes = 0;
     m_pSGList = NULL;
     m_pVAddr = NULL;
     m_pMdl = NULL;
-    m_bDumb = TRUE;
 
     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
 }
 
-VioGpuObj::~VioGpuObj(void)
+
+VioGpuMemSegment::~VioGpuMemSegment(void)
 {
     PAGED_CODE();
 
@@ -623,7 +622,7 @@ VioGpuObj::~VioGpuObj(void)
     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
 }
 
-BOOLEAN VioGpuObj::Init(_In_ UINT size)
+BOOLEAN VioGpuMemSegment::Init(_In_ UINT size, _In_ PPHYSICAL_ADDRESS pPAddr)
 {
     PAGED_CODE();
 
@@ -631,65 +630,73 @@ BOOLEAN VioGpuObj::Init(_In_ UINT size)
 
     ASSERT(size);
     UINT pages = BYTES_TO_PAGES(size);
-    UINT sglsize = sizeof(SCATTER_GATHER_LIST) + (sizeof(SCATTER_GATHER_ELEMENT) * pages);
-    size = pages * PAGE_SIZE;
-    m_pVAddr = new (NonPagedPoolNx) BYTE[size];
-    PVOID buf = PAGE_ALIGN(m_pVAddr);
-    if(!m_pVAddr)
-    {
-        DbgPrint(TRACE_LEVEL_FATAL, ("%s insufficient resources to allocate %x bytes\n", __FUNCTION__, size));
-        return FALSE;
-    }
-    m_pMdl = IoAllocateMdl(m_pVAddr, size,  FALSE, FALSE, NULL);
-    if(!m_pMdl)
-    {
-        DbgPrint(TRACE_LEVEL_FATAL, ("%s insufficient resources to allocate MDLs\n", __FUNCTION__));
-        return FALSE;
-    }
-    __try
-    {
-        // Probe and lock the pages of this buffer in physical memory.
-        // We need only IoReadAccess.
-        MmProbeAndLockPages(m_pMdl, KernelMode, IoWriteAccess);
-    }
-    #pragma prefast(suppress: __WARNING_EXCEPTIONEXECUTEHANDLER, "try/except is only able to protect against user-mode errors and these are the only errors we try to catch here");
-    __except(EXCEPTION_EXECUTE_HANDLER)
-    {
-        DbgPrint(TRACE_LEVEL_FATAL, ("%s Failed to lock pages with error %x\n", __FUNCTION__, GetExceptionCode()));
-        IoFreeMdl(m_pMdl);
-        return FALSE;
-    }
-    m_pSGList = reinterpret_cast<PSCATTER_GATHER_LIST>
-        (new (NonPagedPoolNx) BYTE[sglsize]);
-    m_pSGList->NumberOfElements = 0;
-    m_pSGList->Reserved = 0;
-//       m_pSAddr = reinterpret_cast<BYTE*>
-//    (MmGetSystemAddressForMdlSafe(m_pMdl, NormalPagePriority | MdlMappingNoExecute));
 
-    RtlZeroMemory(m_pSGList, sglsize);
-
-    for (UINT i = 0; i < pages; ++i)
-    {
-        PHYSICAL_ADDRESS pa = {0};
-        ASSERT(MmIsAddressValid(buf));
-        pa = MmGetPhysicalAddress(buf);
-        if (pa.QuadPart == 0LL)
+    if (pPAddr == NULL) {
+        UINT sglsize = sizeof(SCATTER_GATHER_LIST) + (sizeof(SCATTER_GATHER_ELEMENT) * pages);
+        size = pages * PAGE_SIZE;
+        m_pVAddr = new (NonPagedPoolNx) BYTE[size];
+        PVOID buf = PAGE_ALIGN(m_pVAddr);
+        if (!m_pVAddr)
         {
-            DbgPrint(TRACE_LEVEL_FATAL, ("%s Invalid PA buf = %p element %d\n", __FUNCTION__, buf, i));
-            break;
+            DbgPrint(TRACE_LEVEL_FATAL, ("%s insufficient resources to allocate %x bytes\n", __FUNCTION__, size));
+            return FALSE;
         }
-        m_pSGList->Elements[i].Address = pa;
-        m_pSGList->Elements[i].Length = PAGE_SIZE;
-        buf = (PVOID)((LONG_PTR)(buf) + PAGE_SIZE);
-        m_pSGList->NumberOfElements++;
+        m_pMdl = IoAllocateMdl(m_pVAddr, size, FALSE, FALSE, NULL);
+        if (!m_pMdl)
+        {
+            DbgPrint(TRACE_LEVEL_FATAL, ("%s insufficient resources to allocate MDLs\n", __FUNCTION__));
+            return FALSE;
+        }
+        __try
+        {
+            // Probe and lock the pages of this buffer in physical memory.
+            // We need only IoReadAccess.
+            MmProbeAndLockPages(m_pMdl, KernelMode, IoWriteAccess);
+        }
+#pragma prefast(suppress: __WARNING_EXCEPTIONEXECUTEHANDLER, "try/except is only able to protect against user-mode errors and these are the only errors we try to catch here");
+        __except (EXCEPTION_EXECUTE_HANDLER)
+        {
+            DbgPrint(TRACE_LEVEL_FATAL, ("%s Failed to lock pages with error %x\n", __FUNCTION__, GetExceptionCode()));
+            IoFreeMdl(m_pMdl);
+            return FALSE;
+        }
+        m_pSGList = reinterpret_cast<PSCATTER_GATHER_LIST>
+            (new (NonPagedPoolNx) BYTE[sglsize]);
+        m_pSGList->NumberOfElements = 0;
+        m_pSGList->Reserved = 0;
+        //       m_pSAddr = reinterpret_cast<BYTE*>
+        //    (MmGetSystemAddressForMdlSafe(m_pMdl, NormalPagePriority | MdlMappingNoExecute));
+
+        RtlZeroMemory(m_pSGList, sglsize);
+
+        for (UINT i = 0; i < pages; ++i)
+        {
+            PHYSICAL_ADDRESS pa = { 0 };
+            ASSERT(MmIsAddressValid(buf));
+            pa = MmGetPhysicalAddress(buf);
+            if (pa.QuadPart == 0LL)
+            {
+                DbgPrint(TRACE_LEVEL_FATAL, ("%s Invalid PA buf = %p element %d\n", __FUNCTION__, buf, i));
+                break;
+            }
+            m_pSGList->Elements[i].Address = pa;
+            m_pSGList->Elements[i].Length = PAGE_SIZE;
+            buf = (PVOID)((LONG_PTR)(buf)+PAGE_SIZE);
+            m_pSGList->NumberOfElements++;
+        }
+        m_Size = size;
+        DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
+
+        return TRUE;
     }
+    else {
+        DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s FIXME\n", __FUNCTION__));
 
-    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
-
-    return TRUE;
+        return FALSE;
+    }
 }
 
-PHYSICAL_ADDRESS VioGpuObj::GetPhysicalAddress(void)
+PHYSICAL_ADDRESS VioGpuMemSegment::GetPhysicalAddress(void)
 {
     PAGED_CODE();
 
@@ -706,7 +713,7 @@ PHYSICAL_ADDRESS VioGpuObj::GetPhysicalAddress(void)
     return pa;
 }
 
-void VioGpuObj::Close(void)
+void VioGpuMemSegment::Close(void)
 {
     PAGED_CODE();
 
@@ -719,14 +726,58 @@ void VioGpuObj::Close(void)
         m_pMdl = NULL;
     }
 
-    delete [] m_pVAddr;
+    delete[] m_pVAddr;
     m_pVAddr = NULL;
 
-    delete [] reinterpret_cast<PBYTE>(m_pSGList);
+    delete[] reinterpret_cast<PBYTE>(m_pSGList);
     m_pSGList = NULL;
 
     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
 }
+
+
+VioGpuObj::VioGpuObj(void)
+{
+    PAGED_CODE();
+
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));
+
+    m_uiHwRes = 0;
+    m_pSegment = NULL;
+
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
+}
+
+VioGpuObj::~VioGpuObj(void)
+{
+    PAGED_CODE();
+
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));
+
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
+}
+
+BOOLEAN VioGpuObj::Init(_In_ UINT size, VioGpuMemSegment *pSegment)
+{
+    PAGED_CODE();
+
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s requested size = %d\n", __FUNCTION__, size));
+
+    ASSERT(size);
+    ASSERT(pSegment);
+    UINT pages = BYTES_TO_PAGES(size);
+    size = pages * PAGE_SIZE;
+    if (size > m_pSegment->GetSize())
+    {
+        DbgPrint(TRACE_LEVEL_FATAL, ("<--- %s segment size too small = %d (%d)\n", __FUNCTION__, m_pSegment->GetSize(), size));
+        return FALSE;
+    }
+    m_pSegment = pSegment;
+    m_Size = size;
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s size = %d\n", __FUNCTION__, m_Size));
+    return TRUE;
+}
+
 
 PVOID CrsrQueue::AllocCursor(PGPU_VBUFFER* buf)
 {

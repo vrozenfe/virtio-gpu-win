@@ -51,26 +51,42 @@ private:
     UINT         m_uCount;
 };
 
+class VioGpuMemSegment
+{
+public:
+    VioGpuMemSegment(void);
+    ~VioGpuMemSegment(void);
+    SIZE_T GetSize(void) { return m_Size; }
+    PVOID GetVirtualAddress(void) { return m_pVAddr; }
+    PHYSICAL_ADDRESS GetPhysicalAddress(void);
+    PSCATTER_GATHER_LIST GetSGList(void) { return m_pSGList; }
+    BOOLEAN Init(_In_ UINT size, _In_ PPHYSICAL_ADDRESS pPAddr);
+    BOOLEAN IsSystemMemory(void) { return m_bSystemMemory; }
+    void Close(void);
+private:
+    BOOLEAN m_bSystemMemory;
+    PSCATTER_GATHER_LIST m_pSGList;
+    PVOID m_pVAddr;
+    PMDL    m_pMdl;
+    SIZE_T m_Size;
+};
+
 class VioGpuObj
 {
 public:
     VioGpuObj(void);
     ~VioGpuObj(void);
     void SetId(_In_ UINT id) { m_uiHwRes = id; }
-    UINT GetId(void) { return m_uiHwRes;  }
-    BOOLEAN Init(_In_ UINT size);
-    PSCATTER_GATHER_LIST GetSGList(void) { return m_pSGList; }
-    PHYSICAL_ADDRESS GetPhysicalAddress(void);
-    PVOID GetVirtualAddress(void) { return m_pVAddr; }
-private:
-    void Close(void);
+    UINT GetId(void) { return m_uiHwRes; }
+    BOOLEAN Init(_In_ UINT size, VioGpuMemSegment *pSegment);
+    SIZE_T GetSize(void) { return m_Size; }
+    PSCATTER_GATHER_LIST GetSGList(void) { return m_pSegment ? m_pSegment->GetSGList() : NULL; }
+    PHYSICAL_ADDRESS GetPhysicalAddress(void) { PHYSICAL_ADDRESS pa = { 0 }; return m_pSegment ? m_pSegment->GetPhysicalAddress() : pa; }
+    PVOID GetVirtualAddress(void) { return m_pSegment ? m_pSegment->GetVirtualAddress() : NULL; }
 private:
     UINT m_uiHwRes;
-//    VirtIOBufferDescriptor* m_pPages;
-    PSCATTER_GATHER_LIST m_pSGList;
-    PVOID m_pVAddr;
-    BOOLEAN m_bDumb;
-    PMDL    m_pMdl;
+    SIZE_T m_Size;
+    VioGpuMemSegment *m_pSegment;
 };
 
 class VioGpuQueue
