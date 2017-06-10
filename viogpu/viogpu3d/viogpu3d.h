@@ -56,13 +56,32 @@ typedef struct _CURRENT_BDD_MODE
 } CURRENT_BDD_MODE;
 
 class VioGpu3D;
+class VioGpuAdapter;
 
-
-class GpuDevice
+class VioGpuDevice
 {
 public:
-    GpuDevice(_In_ VioGpu3D* pVioGpu3D);
-    ~GpuDevice(void);
+
+    VioGpuDevice(_In_ HANDLE hAdapter, _Inout_ DXGKARG_CREATEDEVICE* pCreateDevice);
+    ~VioGpuDevice();
+
+    NTSTATUS CloseAllocation(
+            _In_ HANDLE                     hDevice,
+            _In_ DXGKARG_CLOSEALLOCATION*   pCloseAlloc);
+    NTSTATUS OpenAllocation (_In_ DXGKARG_OPENALLOCATION* pOpenAlloc);
+
+private:
+    DXGK_CREATEDEVICEFLAGS  m_Flags;
+    HANDLE                  m_hDevice;
+    VioGpuAdapter*          m_pAdapter;
+};
+
+
+class VioGpuAdapter
+{
+public:
+    VioGpuAdapter(_In_ VioGpu3D* pVioGpu3D);
+    ~VioGpuAdapter(void);
     NTSTATUS SetCurrentMode(ULONG Mode, CURRENT_BDD_MODE* pCurrentBddMode);
     ULONG GetModeCount(void) {return m_ModeCount;}
     NTSTATUS SetPowerState(DEVICE_POWER_STATE DevicePowerState, DXGK_DISPLAY_INFORMATION* pDispInfo);
@@ -100,9 +119,9 @@ public:
     UINT GetVSyncFreq() { return 60; }
 protected:
 private:
-    NTSTATUS GpuDeviceInit(DXGK_DISPLAY_INFORMATION* pDispInfo);
+    NTSTATUS VioGpuAdapterInit(DXGK_DISPLAY_INFORMATION* pDispInfo);
     void SetVideoModeInfo(UINT Idx, PGPU_DISP_MODE pModeInfo);
-    void GpuDeviceClose(void);
+    void VioGpuAdapterClose(void);
     NTSTATUS GetModeList(DXGK_DISPLAY_INFORMATION* pDispInfo);
     BOOLEAN AckFeature(UINT64 Feature);
     BOOLEAN GetDisplayInfo(void);
@@ -161,7 +180,7 @@ private:
 
     D3DDDI_VIDEO_PRESENT_SOURCE_ID m_SystemDisplaySourceId;
     DXGKARG_SETPOINTERSHAPE m_PointerShape;
-    GpuDevice* m_pHWDevice;
+    VioGpuAdapter* m_pAdapter;
 public:
     VioGpu3D(_In_ DEVICE_OBJECT* pPhysicalDeviceObject);
     ~VioGpu3D(void);
@@ -243,6 +262,11 @@ public:
     // Part of PnPStop (PnP instance only), returns current mode information (which will be passed to fallback instance by dxgkrnl)
     NTSTATUS StopDeviceAndReleasePostDisplayOwnership(_In_  D3DDDI_VIDEO_PRESENT_TARGET_ID TargetId,
                                                       _Out_ DXGK_DISPLAY_INFORMATION*      pDisplayInfo);
+
+    NTSTATUS DestroyAllocation(_In_ CONST DXGKARG_DESTROYALLOCATION *pDestroyAllocation);
+
+    NTSTATUS CreateAllocation(_In_ DXGKARG_CREATEALLOCATION *pCreateAllocation);
+
 
     // Must be Non-Paged
     // Call to initialize as part of bugcheck

@@ -608,24 +608,22 @@ NTSTATUS
 APIENTRY
 VioGpu3DCreateDevice(
     _In_ CONST HANDLE hAdapter,
-    _In_ DXGKARG_CREATEDEVICE *pCreateDevice)
+    _Inout_ DXGKARG_CREATEDEVICE *pCreateDevice)
 {
     UNREFERENCED_PARAMETER(pCreateDevice);
     PAGED_CODE();
     VIOGPU_ASSERT_CHK(hAdapter != NULL);
     DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));
-    NTSTATUS Status = STATUS_SUCCESS;
 
-    VioGpu3D* pVioGpu3D = reinterpret_cast<VioGpu3D*>(hAdapter);
-    if (!pVioGpu3D->IsDriverActive())
+    pCreateDevice->hDevice = new (NonPagedPoolNx) VioGpuDevice(hAdapter, pCreateDevice);
+    if (!pCreateDevice->hDevice)
     {
-        DbgPrint(TRACE_LEVEL_ERROR, ("VioGpu3D (0x%I64x) is being called when not active (%s)!", pVioGpu3D, __FUNCTION__));
-        return STATUS_UNSUCCESSFUL;
+        DbgPrint(TRACE_LEVEL_FATAL, ("<--> %s VioGpu3D Failed allocate memory for device!\n", __FUNCTION__));
+        return STATUS_NO_MEMORY;
     }
 
-    Status = STATUS_NOT_IMPLEMENTED;
-    DbgPrint(TRACE_LEVEL_INFORMATION, ("<--- %s returned with status 0x%08X\n", __FUNCTION__, Status));
-    return Status;
+    DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s returned with status 0x%08X\n", __FUNCTION__, STATUS_SUCCESS));
+    return STATUS_SUCCESS;
 }
 
 
@@ -648,7 +646,7 @@ VioGpu3DCreateAllocation(
         return STATUS_UNSUCCESSFUL;
     }
 
-    Status = STATUS_NOT_IMPLEMENTED;
+    Status = pVioGpu3D->CreateAllocation(pCreateAllocation);
     DbgPrint(TRACE_LEVEL_INFORMATION, ("<--- %s returned with status 0x%08X\n", __FUNCTION__, Status));
     return Status;
 }
@@ -673,7 +671,8 @@ VioGpu3DDestroyAllocation(
         return STATUS_UNSUCCESSFUL;
     }
 
-    Status = STATUS_NOT_IMPLEMENTED;
+    Status = Status = pVioGpu3D->DestroyAllocation(pDestroyAllocation);
+
     DbgPrint(TRACE_LEVEL_INFORMATION, ("<--- %s returned with status 0x%08X\n", __FUNCTION__, Status));
     return Status;
 }
@@ -1085,12 +1084,13 @@ VioGpu3DDestroyDevice(
     UNREFERENCED_PARAMETER(hDevice);
     PAGED_CODE();
     DbgPrint(TRACE_LEVEL_VERBOSE, ("---> %s\n", __FUNCTION__));
-    NTSTATUS Status = STATUS_SUCCESS;
 
+    VioGpuDevice* pDevice = (VioGpuDevice*)hDevice;
 
-    Status = STATUS_NOT_IMPLEMENTED;
-    DbgPrint(TRACE_LEVEL_INFORMATION, ("<--- %s returned with status 0x%08X\n", __FUNCTION__, Status));
-    return Status;
+    delete pDevice;
+
+    DbgPrint(TRACE_LEVEL_INFORMATION, ("<--- %s returned with status 0x%08X\n", __FUNCTION__, STATUS_SUCCESS));
+    return STATUS_SUCCESS;
 }
 
 NTSTATUS

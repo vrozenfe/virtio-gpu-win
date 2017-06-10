@@ -143,7 +143,7 @@ void mem_free_nonpaged_block(void *context, void *addr)
 
 
 static int PCIReadConfig(
-    GpuDevice* pdev,
+    VioGpuAdapter* pdev,
     int where,
     void *buffer,
     size_t length)
@@ -182,25 +182,25 @@ static int PCIReadConfig(
 
 static int pci_read_config_byte(void *context, int where, u8 *bVal)
 {
-    GpuDevice* pdev = static_cast<GpuDevice*>(context);
+    VioGpuAdapter* pdev = static_cast<VioGpuAdapter*>(context);
     return PCIReadConfig(pdev, where, bVal, sizeof(*bVal));
 }
 
 int pci_read_config_word(void *context, int where, u16 *wVal)
 {
-    GpuDevice* pdev = static_cast<GpuDevice*>(context);
+    VioGpuAdapter* pdev = static_cast<VioGpuAdapter*>(context);
     return PCIReadConfig(pdev, where, wVal, sizeof(*wVal));
 }
 
 int pci_read_config_dword(void *context, int where, u32 *dwVal)
 {
-    GpuDevice* pdev = static_cast<GpuDevice*>(context);
+    VioGpuAdapter* pdev = static_cast<VioGpuAdapter*>(context);
     return PCIReadConfig(pdev, where, dwVal, sizeof(*dwVal));
 }
 
 size_t pci_get_resource_len(void *context, int bar)
 {
-    GpuDevice* pdev = static_cast<GpuDevice*>(context);
+    VioGpuAdapter* pdev = static_cast<VioGpuAdapter*>(context);
     return pdev->GetPciResources()->GetBarSize(bar);
 }
 
@@ -208,7 +208,7 @@ void *pci_map_address_range(void *context, int bar, size_t offset, size_t maxlen
 {
     UNREFERENCED_PARAMETER(maxlen);
 
-    GpuDevice* pdev = static_cast<GpuDevice*>(context);
+    VioGpuAdapter* pdev = static_cast<VioGpuAdapter*>(context);
     return pdev->GetPciResources()->GetMappedAddress(bar, (ULONG)offset);
 }
 

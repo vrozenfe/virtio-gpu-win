@@ -105,7 +105,7 @@ NTSTATUS
 APIENTRY
 VioGpu3DCreateDevice(
     _In_ CONST HANDLE hAdapter,
-    _In_ DXGKARG_CREATEDEVICE *pCreateDevice);
+    _Inout_ DXGKARG_CREATEDEVICE *pCreateDevice);
 
 NTSTATUS
 APIENTRY
